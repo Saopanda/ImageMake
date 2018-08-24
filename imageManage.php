@@ -65,11 +65,11 @@ class imageManage
     			$new_str = $this->mb_str_split($value['str'],$value['num']);
 		    	$top = $value['top'];
 		    	foreach ($new_str as $k => $v) {
-		    		imagefttext($img, $value['size'], $value['deg'], $value['left'], $top, $black, $value['font'], $value['str']);
+		    		imagefttext($img, $value['size'], $value['deg'], $value['left'], $top, $value['color'], $value['font'], $value['str']);
 		    		$top+=$value['lineheight'];
 		    	}
     		}else{
-    			imagefttext($img, $value['size'], $value['deg'], $value['left'], $value['top'], $white, $value['font'], $value['str']);
+    			imagefttext($img, $value['size'], $value['deg'], $value['left'], $value['top'], $value['color'], $value['font'], $value['str']);
     		}
     	}
     	list($bgWidth, $bgHight, $bgType) = getimagesize($bigImgPath);
