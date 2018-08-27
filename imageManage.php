@@ -61,15 +61,16 @@ class imageManage
     		isset($value['size'])? :$value['size']=22;
     		isset($value['font'])? :$value['font']=$this->fontPath;
     		isset($value['is_re'])? :$value['is_re']='0';
+		    $tmpcolor = $value['color'];
     		if($value['is_re'] == '1'){
     			$new_str = $this->mb_str_split($value['str'],$value['num']);
 		    	$top = $value['top'];
 		    	foreach ($new_str as $k => $v) {
-		    		imagefttext($img, $value['size'], $value['deg'], $value['left'], $top, $value['color'], $value['font'], $value['str']);
+		    		imagefttext($img, $value['size'], $value['deg'], $value['left'], $top, $$tmpcolor, $value['font'], $value['str']);
 		    		$top+=$value['lineheight'];
 		    	}
     		}else{
-    			imagefttext($img, $value['size'], $value['deg'], $value['left'], $value['top'], $value['color'], $value['font'], $value['str']);
+    			imagefttext($img, $value['size'], $value['deg'], $value['left'], $value['top'], $$tmpcolor, $value['font'], $value['str']);
     		}
     	}
     	list($bgWidth, $bgHight, $bgType) = getimagesize($bigImgPath);
