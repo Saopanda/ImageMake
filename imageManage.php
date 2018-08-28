@@ -63,7 +63,7 @@ class imageManage
 	 *	]
 	 *	
 	 */
-	public function makeImage($imgPath,$fontPath=null,$colors=null,$re_str=null,$re_img=null)
+	public function makeImage($imgPath,$re_img=null,$fontPath=null,$colors=null,$re_str=null)
 	{
 		
     	$bigImgPath = $imgPath;
