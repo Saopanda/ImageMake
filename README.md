@@ -9,6 +9,19 @@
 * 图片合并提供了拉伸自定义
 * 字体颜色可直接使用16进制颜色, 并且能方便的使用透明色
 
+使用示例:
+```
+return imageManage::new()
+	->imgPath('./'.$track->banner,null,null,true)
+	->font($fontPath)
+	->img('./images/wbg.png')
+	->img($imgcode,[520,245],[120,120])
+	->str($track->title,[40,360],22,'#000')
+	->str('(共 '.$track->points.' 站)',[$lefts,360],15,'#000')
+	->create();
+```
+
+
 > @`imgPath($value,$width=null,$height=null,$alpha=null)`
 
 	$value 可以是路径 (长度不超 1000) 或 图像流字符串
@@ -40,17 +53,7 @@
      $type = 'src' 输出为文件
 	
 
-示例:
-```
-return imageManage::new()
-	->imgPath('./'.$track->banner,null,null,true)
-	->font($fontPath)
-	->img('./images/wbg.png')
-	->img($imgcode,[520,245],[120,120])
-	->str($track->title,[40,360],22,'#000')
-	->str('(共 '.$track->points.' 站)',[$lefts,360],15,'#000')
-	->create();
-```
+
 
 
 <hr/>
