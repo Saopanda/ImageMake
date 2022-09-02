@@ -1,120 +1,79 @@
 # imageManage
-## 图片 + 图片 + 文字 综合合成处理
+使用GD库实现多图片与文字的合成处理
+* 项目重写，发布为 composer 包方便使用
+* 大幅删减和优化，完善的注释上手使用更简单
+* 自带思源黑体，可免费商用
 
-**********************
-# 2.0版本
-* 支持连贯操作了! 解决上版本图片文字先后顺序会覆盖的问题, 用连贯操作自己排序即可
-* 图片合并使用了 `imagecopyresampled` 平滑插帧, 图片高质量同时减少大小, 提升性能
-* 可直接输出到浏览器或者到文件, 详见 `create` 方法
-* 图片合并提供了拉伸自定义
-* 字体颜色可直接使用16进制颜色, 并且能方便的使用透明色
+### 安装
+    composer require saopanda/image-make
 
-使用示例:
+### 使用
+仅三个方法！支持链式调用，越靠后调用的层级越高，会覆盖在前面的层级上
+![img.png](img.png)
+
+```php
+ImageMake::new($config)->img('./make2.jpg')
+    ->img('./make.png',100,200,500,1000)
+    ->str('测试测试',1200,1120,['size'  =>  60,'color'=>"#ff0066"])
+    ->str('测试1测试',1200,1220,['size'  =>  60,'color'=>"#ff4566"])
+    ->str('测试2测试',1400,1420,['size'  =>  60])
+    ->str('测试3测试',1400,1620,['size'  =>  60])
+    ->get();
 ```
-return imageManage::new()
-	->imgPath('./'.$track->banner,null,null,true)
-	->font($fontPath)
-	->img('./images/wbg.png')
-	->img($imgcode,[520,245],[120,120])
-	->str($track->title,[40,360],22,'#000')
-	->str('(共 '.$track->points.' 站)',[$lefts,360],15,'#000')
-	->create();
+
+#### 底图
+* 通过 `ImageMakeConfig->exportSize()` 指定了输出图片的大小时，会自动创建该尺寸的空底图
+* 第一个链式调用的 `img()` 会被自动设为底图
+* 只会创建一次底图，`ImageMakeConfig` 设置的优先级更高 
+
+#### ImageMakeConfig （可选）
+提供了一些额外可更改的配置
+```php
+$config = new ImageMakeConfig();
+$config
+    ->alpha(true)               //  设置透明度支持     默认 true
+    ->exportSize('1920','1080') //  设置底图大小      默认第一个 img()为底图
+    ->exportType(2)             //  设置输出图片格式    默认 png
+    ->font('/font/abc');        //  设置默认字体      默认 思源黑体
+    
+ImageMake::new($config)；        //  传入 new()
 ```
 
+#### img() 叠加图片
+* `$value` 图片路径 或 二进制字符串
+* `$x`, `$y` 位置，叠加在底图哪里，不填左上角 0,0
+* `$new_width`, `$new_height` 把这张图拉伸为新宽高，不填为原图大小
+* 当此图被作为底图使用时，`$x, $y, $new_width, $new_height `参数无效
+```php
+public function img(string $value, int $x = 0, int $y = 0, int $new_width = 0, int $new_height = 0)
+```
 
-> @`imgPath($value,$width=null,$height=null,$alpha=null)`
+#### str() 叠加文字
+* `$value` 要叠加的文字
+* `$x`, `$y` 位置，注意：基点在文字左下角，非左上角
+* `$config` 配置数组：
+```php
+[
+    'color'    =>  string 支持带透明度的16进制颜色,
+    'size'     =>  int 字体大小,
+    'wrap'     =>  false | array [
+        20, //  int 多少字自动换行
+        10  //  int 行高
+    ],
+    'font'     =>  string 字体路径,
+    'deg'      =>  int 旋转角度，设置排列方向，效果：左到右、上到下
+]
+```
 
-	$value 可以是路径 (长度不超 1000) 或 图像流字符串
-	$alpha = true 保存透明信息
-> @`font($value)`
+```php
+public function str(string $value, int $x = 0, int $y = 10, array $config = [])
+```
 
-	$value 字体路径 系统级绝对路径
-> @`str($value,$site=['0','0'],$size=14,$color=['#000000','0'],$is_re=null,$font=null,$deg=0)`
+#### get() 直接输出图片 或 输出图片文件路径
+* `$filename` 指定生成图片文件名，null直接输出图像
+```php
+public function get(string $filename = null)
+```
 
-	 $site = [x,y] 位置, 默认左上角
-     $size = 14 字体大小, 默认14
-     $color = ['#000','0'] 16进制颜色, 第二参数透明度 127全透明
-     $is_re = [num, lineheight] 自动换行 默认 false  num多少字一换 lineheight 行高
-     $font = null 字体 默认null使用全局字体 自定义字体传绝对路径
-     $deg 倾斜角度 默认 0
-> @`img($value,$site=['0','0'],$size=null,$full=null,$is_radius=null)`
-
-	 $value 可以是路径 (长度不超 1000) 或 图像流字符串
-     $site = [x,y] 原图上的位置, 默认左上角
-     $size = [w,h] 原图上宽高, 默认合成图大小
-     $full = null 合成图的宽高(默认true全图大小, 被拉伸到 $size 尺寸)
-     $full = [x,y[,w,h]] 
-     (无 w,h ) 合成图不会被拉伸 从 x,y 坐标 取 $size 大小
-     (有 w,h ) 合成图被自定义拉伸 从 x,y 坐标 取 [w,h] 大小
-     $is_radius = true 切透明圆角
-> @`create($type='default')`
-
-	 $type = 'default' 输出类型 默认输出浏览器
-     $type = 'src' 输出为文件
-	
-
-
-
-
-<hr/>
-
-### 1.0
- *	中文文字支持自动换行
- *	图片支持切成四角透明圆形
- *	radius_img()方图切圆图方法(一般用于头像)可以单独调用,需要传第二参数,为任意值
- *	可以只合成 图+图 或 图+字，只合字 `makeImage()`第二项传null，只合图，后三项可以不用传
- *	要合成文字的话,请传$fontPath,$colors,$re_str三者缺一不可
- *	要合成图片的话,请传$re_img
- *	最终输出为图片,可用于活动的动态海报
-
- > 1. 字体 (全局)
- * $fontPath = '操作系统级的绝对路径'
- > 2. 颜色 键名自定义 (rgb颜色)
- *  ```
-    $colors = [
-	 'black' => [
-	 	'0','0','0'				
-	 ],
-	 'yellow' => [
-	 	'253','200','24'
-	 ],
-	 'white' => [
-	 	'255','255','255'
-	 ]
-	 ....
-    ]
-    ```
- > 3. 图片
- * $imgPath = '相对路径'
- > 4. 需要合成的文字
- *  ```
-    $re_str = [
-	  '0' => [
-	 	'str' => '文字',
-	 	'color' => 'black',		// 必须先设置,填 $colors数组的键名
-	 	'is_re' => '0',			// 默认不换行 1为换行
-	 	'left' => '左边距',		// 默认0
-	 	'top' => '上边距',			// 默认0
-	 	'num' => '多少字一换行',		// 换行时必填
-	 	'lineheight' => '行高',		// 换行时必填
-	  	'size' => '文字大小',		// 默认22
-	 	'deg' => '旋转角度',		// 默认 0
-	 	'font' => '字体路径'		// 默认为全局$fontPath 自定义字体 
-	 ],
-	 ....
-    ]
-    ```
- > 5. 需要合成的图片
- *  ```
-    $re_img = [
-	  '0'=>[
-	 	'src' => '',			// 路径
-	 	'width' => '',			// 默认原图大小,宽度
-	 	'hight' => '',			// 默认原图大小,高度
-	 	'img_left' => '',		// 默认0,左边距
-	 	'img_top' => '',		// 默认0,上边距
-	 	'is_radius' => '1',		// 默认0,不需要圆图切割 
-	 ],
-      ....
-    ]
-    ```
+### 其他
+* 思源黑体 https://github.com/adobe-fonts/source-han-sans/tree/release

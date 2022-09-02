@@ -1,0 +1,20 @@
+{
+    "name": "saopanda/image-make",
+    "description": "使用GD库实现多图片与文字的合成处理",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "saopanda\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "saopanda"
+        }
+    ],
+    "require": {
+      "ext-gd": "*",
+      "ext-mbstring": "*"
+    }
+}
