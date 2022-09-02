@@ -111,34 +111,29 @@ class ImageMake
     {
         $config = array_merge([
             'color'     =>  '#000',
-            'size'      =>  14,
+            'size'      =>  $this->config['font_size'],
             'wrap'      =>  false,
-            'font'      =>  null,
+            'font'      =>  $this->config['font'],
             'deg'       =>  0,
         ],$config);
 
-        if ($config['font']){
-            if (!is_file($config['font']))
-                throw new \Exception('错误的字体路径');
-            $font = $config['font'];
-        } else{
-            $font = $this->config['font'];
-        }
+        if (!is_file($config['font']))
+            throw new \Exception('错误的字体路径');
 
         $color_config = $this->toRgb($config['color']);
 	    $color = imagecolorallocatealpha($this->bgImg, $color_config['r'], $color_config['g'], $color_config['b'], $color_config['a']);
 
         if ($color === false)
-            throw new \Exception('颜色添加失败，检查底图是否过大');
+            throw new \Exception('颜色添加失败，检查底图是否过大。'.json_encode($color_config));
 
 	    if ($config['wrap']){
 	    	$new_value = $this->mb_str_split($value,$config['wrap'][0]);
 	    	foreach ($new_value as $v) {
-	    		imagefttext($this->bgImg, $config['size'], $config['deg'], $x, $y, $color, $font, $v);
+	    		imagefttext($this->bgImg, $config['size'], $config['deg'], $x, $y, $color, $config['font'], $v);
                 $y += $config['wrap'][1];
 	    	}
 	    }else{
-	    	imagefttext($this->bgImg, $config['size'], $config['deg'], $x, $y, $color, $font, $value);
+	    	imagefttext($this->bgImg, $config['size'], $config['deg'], $x, $y, $color, $config['font'], $value);
 	    }
     	return $this;
     }

@@ -14,6 +14,7 @@ class ImageMakeConfig
         'height'    =>  0,
         'alpha'     =>  true,
         'font'      =>  null,
+        'font_size' =>  16,
         'img_type'  =>  3,
     ];
 
@@ -23,7 +24,7 @@ class ImageMakeConfig
      * @param int $height
      * @return ImageMakeConfig
      */
-    public function exportSize(int $width, int $height):self
+    public function exportSize(int $width, int $height): ImageMakeConfig
     {
         $this->config['width'] = $width;
         $this->config['height'] = $height;
@@ -33,7 +34,7 @@ class ImageMakeConfig
     /**
      * 设置输出图片格式
      * @param int $type 1 = GIF，2 = JPG，3 = PNG
-     * @return $this
+     * @return ImageMakeConfig
      * @throws \Exception
      */
     public function exportType(int $type): ImageMakeConfig
@@ -48,9 +49,9 @@ class ImageMakeConfig
     /**
      * 是否启用透明度
      * @param bool $boolean
-     * @return $this
+     * @return ImageMakeConfig
      */
-    public function alpha(bool $boolean ):self
+    public function alpha(bool $boolean ): ImageMakeConfig
     {
         $this->config['alpha'] = $boolean;
         return $this;
@@ -59,15 +60,26 @@ class ImageMakeConfig
     /**
      * 设置默认字体
      * @param string $font
-     * @return $this
+     * @return ImageMakeConfig
      * @throws \Exception
      */
-    public function font(string $font ):self
+    public function font(string $font ): ImageMakeConfig
     {
         if (!is_file($font))
             throw new \Exception('错误的字体路径');
 
         $this->config['font'] = $font;
+        return $this;
+    }
+
+    /**
+     * 设置默认字体大小
+     * @param int $font_size
+     * @return $this
+     */
+    public function fontSize(int $font_size): ImageMakeConfig
+    {
+        $this->config['font_size'] = $font_size;
         return $this;
     }
 
