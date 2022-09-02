@@ -161,6 +161,7 @@ class ImageMake
                 break;
         }
         imagedestroy($this->bgImg);
+        $this->bgImg = null;
         return $filepath;
     }
 
