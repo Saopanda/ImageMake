@@ -140,28 +140,28 @@ class ImageMake
 
     /**
      * 获取图片文件或直接输出
-     * @param string|null $filename 指定生成图片文件名，null直接输出图像
+     * @param string|null $filepath 指定输出的相对路径 + 文件名，否则直接输出图像
      * @return string|null
      */
-    public function get(string $filename = null)
+    public function get(string $filepath = null)
     {
         $type = $this->config['img_type'];
         switch ($type) {
             case 1:
-                $filename ? $filename .= 'gif' : header('Content-Type:image/gif');
-                imagegif($this->bgImg, $filename);
+                $filepath ? $filepath .= '.gif' : header('Content-Type:image/gif');
+                imagegif($this->bgImg, $filepath);
                 break;
             case 2:
-                $filename ? $filename .= 'jpg' : header('Content-Type:image/jpg');
-                imagejpeg($this->bgImg, $filename);
+                $filepath ? $filepath .= '.jpg' : header('Content-Type:image/jpg');
+                imagejpeg($this->bgImg, $filepath);
                 break;
             case 3:
-                $filename ? $filename .= 'png' : header('Content-Type:image/png');
-                imagepng($this->bgImg, $filename);
+                $filepath ? $filepath .= '.png' : header('Content-Type:image/png');
+                imagepng($this->bgImg, $filepath);
                 break;
         }
         imagedestroy($this->bgImg);
-        return $filename;
+        return $filepath;
     }
 
     /**

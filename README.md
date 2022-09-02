@@ -69,10 +69,10 @@ public function str(string $value, int $x = 0, int $y = 10, array $config = [])
 ```
 
 #### get() 直接输出图片 或 输出图片文件路径
-* `$filename` 指定生成图片文件名，null直接输出图像
+* `$filepath` 指定输出的相对路径 + 文件名，否则直接输出图像
 
 ```php
-public function get(string $filename = null)
+public function get(string $filepath = null)
 ```
 
 #### demo
